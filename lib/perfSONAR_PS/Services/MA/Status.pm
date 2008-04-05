@@ -38,8 +38,9 @@ use perfSONAR_PS::Messages;
 use perfSONAR_PS::Client::LS::Remote;
 use perfSONAR_PS::Client::Status::SQL;
 use perfSONAR_PS::Topology::ID;
+use perfSONAR_PS::ParameterValidation;
 
-our $VERSION = 0.08;
+our $VERSION = 0.09;
 
 my %status_namespaces = (
     nmwg => "http://ggf.org/ns/nmwg/base/2.0/",
@@ -308,7 +309,7 @@ sub registerLS {
 =cut
 sub handleEvent {
     my ($self, @args) = @_;
-    my $parameters = validate(@args,
+    my $parameters = validateParams(@args,
             {
                 output => 1,
                 messageId => 1,
@@ -356,6 +357,12 @@ sub handleEvent {
         $metadataId = $filters[-1][0]->getAttribute("id");
     } else {
         $metadataId = $md->getAttribute("id");
+    }
+
+    if ($eventType eq "Path.Status") {
+        # do compat mode
+    } else {
+        # do 'normal' mode
     }
 
     if ($messageType eq "SetupDataRequest") {
